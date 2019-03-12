@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Fingerchain</title>
+    <style>
+        .layer {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: skyblue;
+            margin: -50px 0 0 -50px;
+        }
+
+        .button {
+            padding-top: 20px
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script>
+
+        function info_callback(block_info) {
+            alert(block_info.finger_print + "\n" + block_info.name + "\n" + block_info.phone);
+        }
+        function finger_print_serv_callback(callback_data) {
+            alert('success');
+        }
+
+        function request_fp_info() {
+            $.ajax({
+                type: "GET",
+                url: "http://172.20.10.8:9000/request_fp_info?callback=finger_print_serv_callback",
+                dataType: "jsonp",
+                async: true,
+                data: { "hello": "dude" },
+                crossDomain: true,
+                jsonpCallback: "finger_print_serv_callback",
+                success: function (data) {
+                    //some log
+                },
+                error: function (e) {
+
+                    //some log
+
+                }
+            });
+
+        }
+
+        function submit_clicked() {
+
+            var finger_print_value = document.getElementById('id');
+            var name = document.getElementById('name');
+            var phone_num = document.getElementById('phone');
+
+
+            //finger_print, name, phone nuber의 정보를 server로 보냄.
+            $.ajax({
+                type: "GET",
+                url: "http://192.168.123.121:9000/merged?callback=info_callback&name=" + name.value + "&phone=" + phone_num.value + "&finger_print=" + finger_print_value.value,
+                dataType: "jsonp",
+                async: true,
+                data: { "hello": "dude" },
+                crossDomain: true,
+                jsonpCallback: "info_callback",
+                success: function (data) {
+                    //some log
+                },
+                error: function (e) {
+                    //some log
+                }
+            });
+
+            //try this
+            /*
+            $.ajax({
+                type: "GET",
+                url: "http://192.168.0.37:9000/merged?callback=info_callback&name=" + name.value + "&phone=" + phone_num.value + "&finger_print=" + finger_print_value.value,
+                dataType: "json",
+                async: true
+            });*/
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="layer">
+        <h1>Finger Chain</h1>
+        <div>
+            <label for="id">ID:</label>
+            <input type="text" id="id" name="user_id" />
+        </div>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="user_name" />
+        </div>
+        <div>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="user_phone" />
+        </div>
+        <p>
+            <input type="button" id="submit" value="전송" onclick="submit_clicked()">
+        </p>
+    </div>
+
+    <input type="button" id="fp_btn" value="인증" onclick="request_fp_info()">
+    <input type="button" id="fp_btn" value="등록" onclick="request_fp_info()">
+    <div id="ajaxValue"></div>
+</body>
+
+</html>
